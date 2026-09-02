@@ -26,8 +26,8 @@ jobs:
       run: |
         mkdir -p ~/theos/sdks
         curl -LO https://github.com
-        tar -xf iPhoneOS14.5.sdk.tar.xz -C ~/theos/sdks/
-        rm iPhoneOS14.5.sdk.tar.xz
+        tar -xf v1.0.tar.gz --strip-components=1 -C ~/theos/sdks/
+        rm v1.0.tar.gz
 
     - name: Compile Package
       run: |
