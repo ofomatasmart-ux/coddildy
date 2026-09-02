@@ -1,0 +1,41 @@
+name: Build Theos Tweak
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set up Theos Environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y fakechroot perf rsync Build-essential git
+        git clone --recursive https://github.com ~/theos
+        echo "THEOS=~/theos" >> $GITHUB_ENV
+
+    - name: Install iOS SDK
+      run: |
+        mkdir -p ~/theos/sdks
+        curl -LO https://github.com
+        tar -xf iPhoneOS14.5.sdk.tar.xz -C ~/theos/sdks/
+        rm iPhoneOS14.5.sdk.tar.xz
+
+    - name: Compile Package
+      run: |
+        export THEOS=~/theos
+        make package FINALPACKAGE=1
+
+    - name: Upload Compiled Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Compiled-Tweak
+        path: packages/*.deb
